@@ -1,16 +1,49 @@
 package com.example.hungvu.testpack;
 
+import android.gcm.until.GCMRegister;
+import android.gcm.until.SingleTon;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        SingleTon.bus.register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SingleTon.bus.unregister(this);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // register
+        GCMRegister register = new GCMRegister(this, new GCMRegister.GCMRegistrationCallback() {
+            @Override
+            public void onSuccess(String regid) {
+                Log.d("aaa", regid);
+            }
+
+            @Override
+            public void onFail(GCMRegister.GCMErrorType errorType) {
+                if(errorType == GCMRegister.GCMErrorType.CANNOT_COMMUNICATE_WITH_SERVER){
+                    Log.d("aaa", "cannot communicate with server");
+                }else {
+                    Log.d("aaa", "play service not avairable");
+                }
+            }
+        });
+        register.execute();
     }
 
     @Override
