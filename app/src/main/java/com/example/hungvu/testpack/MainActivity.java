@@ -1,25 +1,30 @@
 package com.example.hungvu.testpack;
 
-import android.gcm.until.GCMRegister;
-import android.gcm.until.SingleTon;
+import android.gcm.utils.GCMRegister;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
         super.onResume();
-        SingleTon.bus.register(this);
+        // register eventbus
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        SingleTon.bus.unregister(this);
+        // don't allow background eventbus for save system resource
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -44,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         register.execute();
+    }
+
+    @Subscribe
+    public void getMessageFromIntentService(String message){
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     @Override

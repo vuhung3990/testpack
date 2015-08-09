@@ -1,4 +1,4 @@
-package android.gcm.until;
+package android.gcm.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,7 +18,7 @@ public class GCMRegister extends AsyncTask<Void, Void, String> {
     private final Context context;
     private final SharedPreferences preferences;
     private final GCMRegistrationCallback callback;
-    private String regIdSaved;
+    private String regIdSaved = null;
 
     public GCMRegister(Context context, GCMRegistrationCallback callback) {
         this.context = context;
@@ -34,7 +34,11 @@ public class GCMRegister extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... params) {
-        if(regIdSaved == null && GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS){
+        if(regIdSaved != null){
+            // if reg id saved in share preference
+            return regIdSaved;
+        } else if(GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+            // if no have reg id in share preference and available google play service then register
             try {
                 // register client
                 GoogleCloudMessaging gcmObj = GoogleCloudMessaging.getInstance(context);
@@ -43,7 +47,8 @@ public class GCMRegister extends AsyncTask<Void, Void, String> {
                 e.printStackTrace();
                 return null;
             }
-        }else {
+        } else {
+            // if google play service not available
             return null;
         }
     }
@@ -52,13 +57,14 @@ public class GCMRegister extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String regid) {
         if(!TextUtils.isEmpty(regid)){
             // store in device
-            preferences.edit().putString(GCMConfig.PREFERENCE_KEY_REG_ID, regid).commit();
+            preferences.edit().putString(GCMConfig.PREFERENCE_KEY_REG_ID, regid).apply();
             regIdSaved = regid;
             
             // callback success
             callback.onSuccess(regid);
 
-            // TODO: store in server (option)
+            // TODO: store in server, easiest way to use AsyncHttpClient library (option)
+            // gradle: compile 'com.loopj.android:android-async-http:1.4.8'
         }else {
             // callback fail
             callback.onFail(GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS ? GCMErrorType.CANNOT_COMMUNICATE_WITH_SERVER : GCMErrorType.GOOGLE_PLAY_SERVICE_NOT_AVAIRABLE);
@@ -85,7 +91,7 @@ public class GCMRegister extends AsyncTask<Void, Void, String> {
 
         /**
          * when cannot get reg id
-         * @param gcmErrorType which error? {@link android.gcm.until.GCMRegister.GCMErrorType}
+         * @param gcmErrorType which error? {@link android.gcm.utils.GCMRegister.GCMErrorType}
          */
         void onFail(GCMErrorType gcmErrorType);
     }
