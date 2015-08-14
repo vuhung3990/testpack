@@ -8,15 +8,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-
-    <LinearLayout
+    <GridLayout
         android:id="@+id/drop_container"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
+        android:columnCount="4"
+        android:rowCount="5"
+        android:rowOrderPreserved="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical"></LinearLayout>
+        android:layout_alignParentTop="true">
+    </GridLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

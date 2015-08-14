@@ -10,8 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private ImageView i3;
     private ImageView i1;
     private ImageView i2;
-    private LinearLayout drop_container;
+    private GridLayout drop_container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         i1.setTag(IMAGEVIEW_TAG);
         i1.setOnTouchListener(this);
 
-        drop_container = (LinearLayout) findViewById(R.id.drop_container);
+        drop_container = (GridLayout) findViewById(R.id.drop_container);
         drop_container.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent event) {
