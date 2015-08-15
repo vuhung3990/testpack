@@ -1,6 +1,5 @@
 package com.example.hungvu.testpack;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +12,10 @@ import java.util.List;
  * Created by Tuandv on 15-Aug-15.
  */
 public class GridAdapter extends RecyclerView.Adapter<Holder> {
-    private final List<String> list;
-    private final Context context;
-    private final LayoutInflater inflate;
+    private final List<GridObject> list;
 
-    public GridAdapter(Context context, List<String> list) {
-        this.context = context;
+    public GridAdapter(List<GridObject> list) {
         this.list = list;
-        inflate = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -30,7 +25,7 @@ public class GridAdapter extends RecyclerView.Adapter<Holder> {
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        holder.txt.setText(list.get(position));
+        holder.txt.setText(list.get(position).getContent());
     }
 
     @Override

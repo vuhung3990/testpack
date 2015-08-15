@@ -39,29 +39,28 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         recycleView = (RecyclerView) findViewById(R.id.my_recycler_view);
         recycleView.setHasFixedSize(true);
 
-        List<String> listData = new ArrayList<String>();
-        listData.add("AAAA");
-        listData.add("AAAA");
-        listData.add("AAAA");
-        listData.add("AAAA");
-        listData.add("AAAA");
-        listData.add("AAAA");
-        listData.add("AAAA");
-        listData.add("AAAA");
-        listData.add("AAAA");
+        final List<GridObject> listData = new ArrayList<>();
+        listData.add(new GridObject(2, 2, "AAAA"));
+        listData.add(new GridObject(1, 2, "AAAA"));
+        listData.add(new GridObject(2, 2, "AAAA"));
+        listData.add(new GridObject(1, 2, "AAAA"));
+        listData.add(new GridObject(4, 2, "AAAA"));
+        listData.add(new GridObject(3, 2, "AAAA"));
+        listData.add(new GridObject(2, 2, "AAAA"));
 
         // set layout manager
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 5);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 5); /*  [*]  */
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                return position == 2 ? 2 : 1;
+                // don't put getWidth larger than spanCount [*]
+                return listData.get(position).getWidth();
             }
         });
         recycleView.setLayoutManager(layoutManager);
 
         // adapter
-        GridAdapter adapter = new GridAdapter(this, listData);
+        GridAdapter adapter = new GridAdapter(listData);
         recycleView.setAdapter(adapter);
         /** ============================================== **/
 
