@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class GridAdapter extends RecyclerView.Adapter<Holder> {
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         holder.txt.setText(list.get(position).getContent());
+        holder.image.setImageDrawable(list.get(position).getDrawable());
     }
 
     @Override
@@ -37,8 +39,10 @@ public class GridAdapter extends RecyclerView.Adapter<Holder> {
 
 class Holder extends RecyclerView.ViewHolder{
     TextView txt;
+    ImageView image;
     public Holder(View itemView) {
         super(itemView);
         txt = (TextView) itemView.findViewById(R.id.textView);
+        image = (ImageView) itemView.findViewById(R.id.imageView);
     }
 }

@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private ImageView i2;
     private GridLayout drop_container;
     private RecyclerView recycleView;
+    private List<GridObject> listData;
+    private GridAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +35,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_main);
 
         i1 = (ImageView) findViewById(R.id.imageView);
+        i2 = (ImageView) findViewById(R.id.imageView2);
 
         /** ============================================== **/
         // setup recycle view
         recycleView = (RecyclerView) findViewById(R.id.my_recycler_view);
         recycleView.setHasFixedSize(true);
 
-        final List<GridObject> listData = new ArrayList<>();
-        listData.add(new GridObject(2, 2, "AAAA"));
-        listData.add(new GridObject(1, 2, "AAAA"));
-        listData.add(new GridObject(2, 2, "AAAA"));
-        listData.add(new GridObject(1, 2, "AAAA"));
-        listData.add(new GridObject(4, 2, "AAAA"));
-        listData.add(new GridObject(3, 2, "AAAA"));
-        listData.add(new GridObject(2, 2, "AAAA"));
+        listData = new ArrayList<>();
 
         // set layout manager
         GridLayoutManager layoutManager = new GridLayoutManager(this, 5); /*  [*]  */
@@ -60,16 +56,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         recycleView.setLayoutManager(layoutManager);
 
         // adapter
-        GridAdapter adapter = new GridAdapter(listData);
+        adapter = new GridAdapter(listData);
         recycleView.setAdapter(adapter);
         /** ============================================== **/
 
         // Sets the tag
         i1.setTag(IMAGEVIEW_TAG);
         i1.setOnTouchListener(this);
+        i2.setTag(IMAGEVIEW_TAG);
+        i2.setOnTouchListener(this);
 
-        drop_container = (GridLayout) findViewById(R.id.drop_container);
-        drop_container.setOnDragListener(new View.OnDragListener() {
+        recycleView.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent event) {
                 switch (event.getAction()) {
@@ -96,11 +93,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     // x, y last change here
                     case DragEvent.ACTION_DROP:
                         // retrieve object state here
-                        TagObject object = (TagObject) event.getLocalState();
+                        GridObject object = (GridObject) event.getLocalState();
 
-                        ImageView imageView = new ImageView(drop_container.getContext());
-                        imageView.setImageDrawable(i1.getDrawable());
-                        drop_container.addView(imageView);
+                        // add to grid
+                        listData.add(object);
+                        adapter.notifyDataSetChanged();
+
                         Log.d("life", "drop x=" + event.getX() + ", y=" + event.getY()+ ", width="+object.getWidth()+", height="+object.getHeight());
                         break;
 
@@ -109,54 +107,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                         // show for test
                         i1.setVisibility(View.VISIBLE);
+                        i2.setVisibility(View.VISIBLE);
                         Log.d("life", "ended");
                         break;
                 }
                 return true;
             }
         });
-    }
-
-    class TagObject{
-        private int width;
-        private int height;
-
-        public TagObject(int width, int height) {
-            this.width = width;
-            this.height = height;
-        }
-
-        /**
-         * @return width
-         */
-        public int getWidth() {
-            return width;
-        }
-
-        /**
-         * set width
-         *
-         * @param width
-         */
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        /**
-         * @return height
-         */
-        public int getHeight() {
-            return height;
-        }
-
-        /**
-         * set height
-         *
-         * @param height
-         */
-        public void setHeight(int height) {
-            this.height = height;
-        }
     }
 
     @Override
@@ -193,7 +150,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 
                 // create local state object then retrieve later in ACTION_DROP
-                TagObject tagObject = new TagObject(2,1);
+                // view.getId() == R.id.imageView ? 1 : 2 | width = 1 if image else 2
+                GridObject tagObject = new GridObject(view.getId() == R.id.imageView ? 1 : 2, 1, "text", getResources().getDrawable(R.mipmap.ic_launcher));
 
                 view.startDrag(data, //data to be dragged
                         shadowBuilder, //drag shadow

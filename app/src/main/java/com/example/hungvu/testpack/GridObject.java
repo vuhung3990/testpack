@@ -1,9 +1,12 @@
 package com.example.hungvu.testpack;
 
+import android.graphics.drawable.Drawable;
+
 /**
  * Created by Tuandv on 15-Aug-15.
  */
 public class GridObject {
+    private Drawable drawable;
     private int width;
     private int height;
     private int column;
@@ -14,10 +17,27 @@ public class GridObject {
      * @param width grid item width
      * @param height grid item width
      */
-    public GridObject(int width, int height, String content) {
+    public GridObject(int width, int height, String content, Drawable drawable) {
         this.width = width;
         this.height = height;
         this.content = content;
+        this.drawable = drawable;
+    }
+
+    /**
+     * @return drawable
+     */
+    public Drawable getDrawable() {
+        return drawable;
+    }
+
+    /**
+     * set drawable
+     *
+     * @param drawable
+     */
+    public void setDrawable(Drawable drawable) {
+        this.drawable = drawable;
     }
 
     /**
