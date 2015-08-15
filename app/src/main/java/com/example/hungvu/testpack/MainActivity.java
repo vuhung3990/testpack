@@ -4,6 +4,8 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.Menu;
@@ -13,6 +15,9 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private static final String IMAGEVIEW_TAG = "aaaaaa";
@@ -20,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private ImageView i1;
     private ImageView i2;
     private GridLayout drop_container;
+    private RecyclerView recycleView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +33,37 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_main);
 
         i1 = (ImageView) findViewById(R.id.imageView);
+
+        /** ============================================== **/
+        // setup recycle view
+        recycleView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recycleView.setHasFixedSize(true);
+
+        List<String> listData = new ArrayList<String>();
+        listData.add("AAAA");
+        listData.add("AAAA");
+        listData.add("AAAA");
+        listData.add("AAAA");
+        listData.add("AAAA");
+        listData.add("AAAA");
+        listData.add("AAAA");
+        listData.add("AAAA");
+        listData.add("AAAA");
+
+        // set layout manager
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 5);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return position == 2 ? 2 : 1;
+            }
+        });
+        recycleView.setLayoutManager(layoutManager);
+
+        // adapter
+        GridAdapter adapter = new GridAdapter(this, listData);
+        recycleView.setAdapter(adapter);
+        /** ============================================== **/
 
         // Sets the tag
         i1.setTag(IMAGEVIEW_TAG);
