@@ -2,16 +2,21 @@ package com.example.hungvu.testpack;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+
+import com.example.hungvu.testpack.CustomView.CustomItem;
+import com.example.hungvu.testpack.CustomView.ItemObject;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
@@ -20,19 +25,29 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private ImageView i1;
     private ImageView i2;
     private GridLayout drop_container;
+    private LayoutInflater inflater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         i1 = (ImageView) findViewById(R.id.imageView);
 
         // Sets the tag
         i1.setTag(IMAGEVIEW_TAG);
         i1.setOnTouchListener(this);
 
+        // sample item 1 (2x1)
+        CustomItem item1 = new CustomItem(this, new ItemObject(2, 1, new Point(0, 0)));
+        // sample 2 (2x2)
+        CustomItem item2 = new CustomItem(this, new ItemObject(2, 2, new Point(0, 2)));
+        // sample 3 (1x3)
+        CustomItem item3 = new CustomItem(this, new ItemObject(1, 3, new Point(3, 1)));
+
         drop_container = (GridLayout) findViewById(R.id.drop_container);
+
         drop_container.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent event) {
