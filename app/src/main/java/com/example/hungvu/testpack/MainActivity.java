@@ -2,9 +2,10 @@ package com.example.hungvu.testpack;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
-import android.graphics.Point;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -12,11 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-
-import com.example.hungvu.testpack.CustomView.CustomItem;
-import com.example.hungvu.testpack.CustomView.ItemObject;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
@@ -39,14 +38,95 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         i1.setTag(IMAGEVIEW_TAG);
         i1.setOnTouchListener(this);
 
+
+        /***********************************************************************************************************/
+        int itemPadding = (int) convertDpToPixel(1);
+        int TOTAL_COLUMN_GRID = 4;  // grid get column count
+        int TOTAL_ROW_GRID = 5;     // grid get row count
+        boolean [][] state = new boolean[TOTAL_ROW_GRID][TOTAL_COLUMN_GRID];
+
         // sample item 1 (2x1)
-        CustomItem item1 = new CustomItem(this, new ItemObject(2, 1, new Point(0, 0)));
+        Button button1 = new Button(this);
+        button1.setText("1");
+
+        // row spec (which position row?, rowSpan ?), column spec (which column?, column span ?)
+        GridLayout.LayoutParams params1 = new GridLayout.LayoutParams(GridLayout.spec(0, 1), GridLayout.spec(0, 2));
+        // save row spec state ( 0+1 is last position of row)
+        // save column spec state
+        for (int i = 0; i < 0+1; i++) {
+            for (int j = 0; j < 0+2; j++) {
+                state[i][j] = true;
+            }
+        }
+
+        // base unit * width
+        params1.width = (int) convertDpToPixel(100);
+        params1.height = (int) convertDpToPixel(50);
+        button1.setLayoutParams(params1);
+        button1.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
+        button1.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
+
         // sample 2 (2x2)
-        CustomItem item2 = new CustomItem(this, new ItemObject(2, 2, new Point(0, 2)));
+        Button button2 = new Button(this);
+        button2.setText("2");
+
+        GridLayout.LayoutParams params2 = new GridLayout.LayoutParams(GridLayout.spec(2, 2), GridLayout.spec(0, 2));
+        // save row spec state
+        // save column spec state
+        for (int i = 2; i < 2+2; i++) {
+            for (int j = 0; j < 0+2; j++) {
+                state[i][j] = true;
+            }
+        }
+
+        params2.width = (int) convertDpToPixel(100);
+        params2.height = (int) convertDpToPixel(100);
+        button2.setLayoutParams(params2);
+        button2.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
+        button2.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
+
         // sample 3 (1x3)
-        CustomItem item3 = new CustomItem(this, new ItemObject(1, 3, new Point(3, 1)));
+        Button button3 = new Button(this);
+        button3.setText("3");
+
+        GridLayout.LayoutParams params3 = new GridLayout.LayoutParams(GridLayout.spec(1, 3), GridLayout.spec(3, 1));
+        // save row spec state
+        // save column spec state
+        for (int i = 1; i < 1+3; i++) {
+            for (int j = 3; j < 3+1; j++) {
+                state[i][j] = true;
+            }
+        }
+
+        params3.width = (int) convertDpToPixel(50);
+        params3.height = (int) convertDpToPixel(150);
+        button3.setLayoutParams(params3);
+        button3.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
+        button3.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
 
         drop_container = (GridLayout) findViewById(R.id.drop_container);
+        drop_container.addView(button1);
+        drop_container.addView(button2);
+        drop_container.addView(button3);
+
+        // fill empty items
+        for (int i = 0; i < TOTAL_ROW_GRID; i++) {
+            for (int j = 0; j < TOTAL_COLUMN_GRID; j++) {
+                // check if state = false -> add empty grid item
+                if( !state[i][j] ){
+
+                    // create new view with bordered
+                    View view = new View(this);
+                    view.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
+                    GridLayout.LayoutParams paramsEmpty = new GridLayout.LayoutParams(GridLayout.spec(i, 1), GridLayout.spec(j, 1));
+                    paramsEmpty.width = (int) convertDpToPixel(50);
+                    paramsEmpty.height = (int) convertDpToPixel(50);
+                    view.setLayoutParams(paramsEmpty);
+
+                    drop_container.addView(view);
+                }
+            }
+        }
 
         drop_container.setOnDragListener(new View.OnDragListener() {
             @Override
@@ -94,6 +174,18 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 return true;
             }
         });
+    }
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public static float convertDpToPixel(float dp){
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return px;
     }
 
     class TagObject{
