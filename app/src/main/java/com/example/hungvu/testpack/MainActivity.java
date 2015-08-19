@@ -40,9 +40,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
 
         /***********************************************************************************************************/
-        int itemPadding = (int) convertDpToPixel(1);
+        int itemPadding = (int) convertDpToPixel(0.5f);
         int TOTAL_COLUMN_GRID = 4;  // grid get column count
         int TOTAL_ROW_GRID = 5;     // grid get row count
+
+        // this variable to save gridlayout state ( true: position used, false: free space )
         boolean [][] state = new boolean[TOTAL_ROW_GRID][TOTAL_COLUMN_GRID];
 
         // sample item 1 (2x1)
@@ -59,9 +61,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
 
-        // base unit * width
-        params1.width = (int) convertDpToPixel(100);
-        params1.height = (int) convertDpToPixel(50);
+        // base unit * width ( width = base_unit=50 * columnSpan=2 || height = base_unit=50 * rowSpan=1)
+        params1.width = (int) convertDpToPixel(50 * 2);
+        params1.height = (int) convertDpToPixel(50 *1);
         button1.setLayoutParams(params1);
         button1.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
         button1.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
@@ -79,8 +81,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
 
-        params2.width = (int) convertDpToPixel(100);
-        params2.height = (int) convertDpToPixel(100);
+        params2.width = (int) convertDpToPixel(50 * 2);
+        params2.height = (int) convertDpToPixel(50 * 2);
         button2.setLayoutParams(params2);
         button2.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
         button2.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
@@ -98,9 +100,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
 
-        params3.width = (int) convertDpToPixel(50);
-        params3.height = (int) convertDpToPixel(150);
+        params3.width = (int) convertDpToPixel(50 * 1);
+        params3.height = (int) convertDpToPixel(50 * 3);
         button3.setLayoutParams(params3);
+        //set border background and small padding for show border
         button3.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
         button3.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
 
@@ -119,6 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     View view = new View(this);
                     view.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
                     GridLayout.LayoutParams paramsEmpty = new GridLayout.LayoutParams(GridLayout.spec(i, 1), GridLayout.spec(j, 1));
+
+                    // empty width , height = base unit
                     paramsEmpty.width = (int) convertDpToPixel(50);
                     paramsEmpty.height = (int) convertDpToPixel(50);
                     view.setLayoutParams(paramsEmpty);
