@@ -15,7 +15,7 @@ public class GridLayoutHelper {
     /**
      * screen width / totalColumnGrid
      */
-    private final int baseUnit;
+    private int baseUnit = 0;
 
     /**
      * save context of grid layout
@@ -23,7 +23,7 @@ public class GridLayoutHelper {
     private final Context context;
 
     /**
-     * default padding of item
+     * default padding of item ( not empty item ) for show border
      */
     private int itemPadding = (int) convertDpToPixel(0.5f);
 
@@ -54,15 +54,51 @@ public class GridLayoutHelper {
         totalRowGrid = gridLayout.getRowCount();
         state = new boolean[totalRowGrid][totalColumnGrid];
 
-        if (totalColumnGrid <= 0)
-            try {
-                throw new Exception("Please set GridLayout's columnCount in XML or programmatically");
-            } catch (Exception e) {
-                Log.e(GridLayoutHelper.class.getSimpleName(), "Please set GridLayout's columnCount in XML or programmatically.");
-            }
+        // you have to set column and row of grid
+        if (totalRowGrid <= 0 || totalColumnGrid <= 0) {
+            // ============== ERROR ===============
+            // Please set GridLayout's columnCount and rowCount in XML or programmatically.
+            // ====================================
+            throw new MyCustomException("Please set GridLayout's columnCount and rowCount in XML or programmatically.");
+        } else {
+            // TODO: calculate base unit
+            this.baseUnit = context.getResources().getDisplayMetrics().widthPixels / totalColumnGrid;
+        }
+    }
 
-        // TODO: calculate base unit
-        this.baseUnit = context.getResources().getDisplayMetrics().widthPixels/totalColumnGrid;
+    /**
+     *  don't care about this class, custom throwable message
+     *  usage : throw new MyCustomException("Please set GridLayout's columnCount and rowCount in XML or programmatically.");
+     */
+    public static class MyCustomException extends RuntimeException{
+        private final String message;
+        private String title = "([ ERROR ])";
+
+        /**
+         * Custom throwable with message with default title
+         * @param message your message
+         */
+        public MyCustomException(String message) {
+            this.message = message;
+        }
+
+        /**
+         * Custom throwable with message and title
+         * @param message your message
+         * @param title title of message
+         */
+        public MyCustomException(String message, String title){
+            this.message = message;
+            this.title = title;
+        }
+
+        @Override
+        public String getMessage() {
+            String msg = message;
+            String borderString = new String(new char[msg.length() / 2]).replace("\0", "=");
+            msg = "\n" + borderString + title + borderString + "\n" + msg + "\n" + borderString + new String(new char[title.length()]).replace("\0", "=") + borderString + "\n";
+            return msg;
+        }
     }
 
     /**
@@ -74,55 +110,62 @@ public class GridLayoutHelper {
      * @param columnSpan column size
      */
     public void addView(int row, int rowSpan, int column, int columnSpan) {
-        // create view properties
-        GridItemProperties properties = new GridItemProperties(row, rowSpan, column, columnSpan);
+        // check valid column and row
+        if (row < totalRowGrid && column < totalColumnGrid) {
+            // TODO: check views in selected zone -> delete view which found -> add view
 
-        // check view is existed in grid layout ?
-        if (gridLayout.findViewWithTag(properties.getTagFromProperties()) == null) {
-            // create new view
-            Button button = new Button(context);
-            // set view's content
-            button.setText("1");
+            // create view properties
+            GridItemProperties properties = new GridItemProperties(row, rowSpan, column, columnSpan);
 
-            // row spec (which position row?, rowSpan ?), column spec (which column?, column span ?)
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(row, rowSpan), GridLayout.spec(column, columnSpan));
-            // base unit * width (sample: width = base_unit=50 * columnSpan=2 || height = base_unit=50 * rowSpan=1)
-            params.width = baseUnit * columnSpan;
-            params.height = baseUnit * rowSpan;
+            // check view is existed in grid layout ?
+            if (gridLayout.findViewWithTag(properties.getTagFromProperties()) == null) {
+                // create new view
+                Button button = new Button(context);
+                // set view's content
+                button.setText("1");
 
-            // calculate row spec state ( row + rowSpan is last position of row)
-            for (int i = row; i < row + rowSpan; i++) {
-                // calculate column spec state
-                for (int j = column; j < column + columnSpan; j++) {
-                    // set state is true( means it's used )
-                    state[i][j] = true;
+                // row spec (which position row?, rowSpan ?), column spec (which column?, column span ?)
+                GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(row, rowSpan), GridLayout.spec(column, columnSpan));
+                // base unit * width (sample: width = base_unit=50 * columnSpan=2 || height = base_unit=50 * rowSpan=1)
+                params.width = baseUnit * columnSpan;
+                params.height = baseUnit * rowSpan;
+
+                // calculate row spec state ( row + rowSpan is last position of row)
+                for (int i = row; i < row + rowSpan; i++) {
+                    // calculate column spec state
+                    for (int j = column; j < column + columnSpan; j++) {
+                        // set state is true( means it's used )
+                        state[i][j] = true;
+                    }
                 }
+
+                // set layout param
+                button.setLayoutParams(params);
+
+                // set default padding
+                button.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
+
+                // set my border (option)
+                button.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.bg_item));
+
+                // set tag for escape duplicate add same view
+                button.setTag(properties.getTagFromProperties());
+
+                // add to grid layout
+                gridLayout.addView(button);
+                Log.d(this.getClass().getName(), "not existed -> add new view");
+            } else {
+                Log.d(this.getClass().getName(), "view existed -> skip");
             }
-
-            // set layout param
-            button.setLayoutParams(params);
-
-            // set default padding
-            button.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
-
-            // set my border (option)
-            button.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.bg_item));
-
-            // set tag for escape duplicate add same view
-            button.setTag(properties.getTagFromProperties());
-
-            // add to grid layout
-            gridLayout.addView(button);
-            Log.d(this.getClass().getName(), "not existed -> add new view");
         } else {
-            Log.d(this.getClass().getName(), "view existed -> skip");
+            Log.d(this.getClass().getName(), "column = " + column + " and row = " + row + " is not valid -> skip");
         }
     }
 
     /**
      * fill all empty grid items
      */
-    public void fillAllEmptyItem() {
+    public void notifyDataChanged() {
         // fill all empty items
         for (int i = 0; i < totalRowGrid; i++) {
             for (int j = 0; j < totalColumnGrid; j++) {
@@ -167,7 +210,7 @@ public class GridLayoutHelper {
     /**
      * set totalColumnGrid
      *
-     * @param totalColumnGrid
+     * @param totalColumnGrid number of total grid layout column
      */
     public void setTotalColumnGrid(int totalColumnGrid) {
         this.totalColumnGrid = totalColumnGrid;
@@ -183,7 +226,7 @@ public class GridLayoutHelper {
     /**
      * set totalRowGrid
      *
-     * @param totalRowGrid
+     * @param totalRowGrid number of total grid layout row
      */
     public void setTotalRowGrid(int totalRowGrid) {
         this.totalRowGrid = totalRowGrid;
@@ -199,7 +242,7 @@ public class GridLayoutHelper {
     /**
      * set state
      *
-     * @param state
+     * @param state 2D array state of grid
      */
     public void setState(boolean[][] state) {
         this.state = state;
@@ -215,14 +258,14 @@ public class GridLayoutHelper {
     /**
      * set itemPadding
      *
-     * @param itemPadding
+     * @param itemPadding padding of insert row
      */
     public void setItemPadding(int itemPadding) {
         this.itemPadding = itemPadding;
     }
 
     /**
-     * @return baseUnit
+     * @return baseUnit (px)
      */
     public int getBaseUnit() {
         return baseUnit;

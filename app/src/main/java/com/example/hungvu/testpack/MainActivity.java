@@ -33,46 +33,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         i1 = (ImageView) findViewById(R.id.imageView);
 
-        // Sets the tag
+        // set the tag
         i1.setTag(IMAGEVIEW_TAG);
         i1.setOnTouchListener(this);
 
         drop_container = (GridLayout) findViewById(R.id.drop_container);
         GridLayoutHelper gridLayoutHelper = new GridLayoutHelper(drop_container);
-        gridLayoutHelper.addView(0, 1, 0, 2);
-        gridLayoutHelper.addView(2, 2, 0, 2);
-        gridLayoutHelper.addView(1, 3, 3, 1);
-        gridLayoutHelper.fillAllEmptyItem();
-
-        // test duplicate view
-        gridLayoutHelper.addView(0, 1, 0, 2);
-        gridLayoutHelper.addView(2, 2, 0, 2);
-        gridLayoutHelper.addView(1, 3, 3, 1);
-        gridLayoutHelper.fillAllEmptyItem();
-
-        // test duplicate view
-        gridLayoutHelper.addView(0, 1, 0, 2);
-        gridLayoutHelper.addView(2, 2, 0, 2);
-        gridLayoutHelper.addView(1, 3, 3, 1);
-        gridLayoutHelper.fillAllEmptyItem();
-
-        // test duplicate view
-        gridLayoutHelper.addView(0, 1, 0, 2);
-        gridLayoutHelper.addView(2, 2, 0, 2);
-        gridLayoutHelper.addView(1, 3, 3, 1);
-        gridLayoutHelper.fillAllEmptyItem();
-
-        // test duplicate view
-        gridLayoutHelper.addView(0, 1, 0, 2);
-        gridLayoutHelper.addView(2, 2, 0, 2);
-        gridLayoutHelper.addView(1, 3, 3, 1);
-        gridLayoutHelper.fillAllEmptyItem();
-
-        // test duplicate view
-        gridLayoutHelper.addView(0, 1, 0, 2);
-        gridLayoutHelper.addView(2, 2, 0, 2);
-        gridLayoutHelper.addView(1, 3, 3, 1);
-        gridLayoutHelper.fillAllEmptyItem();
+        gridLayoutHelper.notifyDataChanged();
 
 
         drop_container.setOnDragListener(new View.OnDragListener() {
