@@ -9,7 +9,7 @@ public class GridItemProperties {
     private int columnSpan;
     private int rowSpan;
 
-    public GridItemProperties(int column, int row, int columnSpan, int rowSpan) {
+    public GridItemProperties(int row, int rowSpan, int column, int columnSpan) {
         this.column = column;
         this.row = row;
         this.columnSpan = columnSpan;
@@ -78,5 +78,12 @@ public class GridItemProperties {
      */
     public void setRowSpan(int rowSpan) {
         this.rowSpan = rowSpan;
+    }
+
+    /**
+     * @return unique tag from properties
+     */
+    public String getTagFromProperties(){
+        return String.format("%d_%d_%d_%d", row, rowSpan, column, columnSpan);
     }
 }

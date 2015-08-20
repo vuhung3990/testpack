@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 
@@ -38,100 +37,43 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         i1.setTag(IMAGEVIEW_TAG);
         i1.setOnTouchListener(this);
 
-
-        /***********************************************************************************************************/
-        int itemPadding = (int) convertDpToPixel(0.5f);
-        int TOTAL_COLUMN_GRID = 4;  // grid get column count
-        int TOTAL_ROW_GRID = 5;     // grid get row count
-
-        // this variable to save gridlayout state ( true: position used, false: free space )
-        boolean [][] state = new boolean[TOTAL_ROW_GRID][TOTAL_COLUMN_GRID];
-
-        // sample item 1 (2x1)
-        Button button1 = new Button(this);
-        button1.setText("1");
-
-        // row spec (which position row?, rowSpan ?), column spec (which column?, column span ?)
-        GridLayout.LayoutParams params1 = new GridLayout.LayoutParams(GridLayout.spec(0, 1), GridLayout.spec(0, 2));
-        // save row spec state ( 0+1 is last position of row)
-        // save column spec state
-        for (int i = 0; i < 0+1; i++) {
-            for (int j = 0; j < 0+2; j++) {
-                state[i][j] = true;
-            }
-        }
-
-        // base unit * width ( width = base_unit=50 * columnSpan=2 || height = base_unit=50 * rowSpan=1)
-        params1.width = (int) convertDpToPixel(50 * 2);
-        params1.height = (int) convertDpToPixel(50 *1);
-        button1.setLayoutParams(params1);
-        button1.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
-        button1.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
-
-        // sample 2 (2x2)
-        Button button2 = new Button(this);
-        button2.setText("2");
-
-        GridLayout.LayoutParams params2 = new GridLayout.LayoutParams(GridLayout.spec(2, 2), GridLayout.spec(0, 2));
-        // save row spec state
-        // save column spec state
-        for (int i = 2; i < 2+2; i++) {
-            for (int j = 0; j < 0+2; j++) {
-                state[i][j] = true;
-            }
-        }
-
-        params2.width = (int) convertDpToPixel(50 * 2);
-        params2.height = (int) convertDpToPixel(50 * 2);
-        button2.setLayoutParams(params2);
-        button2.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
-        button2.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
-
-        // sample 3 (1x3)
-        Button button3 = new Button(this);
-        button3.setText("3");
-
-        GridLayout.LayoutParams params3 = new GridLayout.LayoutParams(GridLayout.spec(1, 3), GridLayout.spec(3, 1));
-        // save row spec state
-        // save column spec state
-        for (int i = 1; i < 1+3; i++) {
-            for (int j = 3; j < 3+1; j++) {
-                state[i][j] = true;
-            }
-        }
-
-        params3.width = (int) convertDpToPixel(50 * 1);
-        params3.height = (int) convertDpToPixel(50 * 3);
-        button3.setLayoutParams(params3);
-        //set border background and small padding for show border
-        button3.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
-        button3.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
-
         drop_container = (GridLayout) findViewById(R.id.drop_container);
-        drop_container.addView(button1);
-        drop_container.addView(button2);
-        drop_container.addView(button3);
+        GridLayoutHelper gridLayoutHelper = new GridLayoutHelper(drop_container);
+        gridLayoutHelper.addView(0, 1, 0, 2);
+        gridLayoutHelper.addView(2, 2, 0, 2);
+        gridLayoutHelper.addView(1, 3, 3, 1);
+        gridLayoutHelper.fillAllEmptyItem();
 
-        // fill empty items
-        for (int i = 0; i < TOTAL_ROW_GRID; i++) {
-            for (int j = 0; j < TOTAL_COLUMN_GRID; j++) {
-                // check if state = false -> add empty grid item
-                if( !state[i][j] ){
+        // test duplicate view
+        gridLayoutHelper.addView(0, 1, 0, 2);
+        gridLayoutHelper.addView(2, 2, 0, 2);
+        gridLayoutHelper.addView(1, 3, 3, 1);
+        gridLayoutHelper.fillAllEmptyItem();
 
-                    // create new view with bordered
-                    View view = new View(this);
-                    view.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_item));
-                    GridLayout.LayoutParams paramsEmpty = new GridLayout.LayoutParams(GridLayout.spec(i, 1), GridLayout.spec(j, 1));
+        // test duplicate view
+        gridLayoutHelper.addView(0, 1, 0, 2);
+        gridLayoutHelper.addView(2, 2, 0, 2);
+        gridLayoutHelper.addView(1, 3, 3, 1);
+        gridLayoutHelper.fillAllEmptyItem();
 
-                    // empty width , height = base unit
-                    paramsEmpty.width = (int) convertDpToPixel(50);
-                    paramsEmpty.height = (int) convertDpToPixel(50);
-                    view.setLayoutParams(paramsEmpty);
+        // test duplicate view
+        gridLayoutHelper.addView(0, 1, 0, 2);
+        gridLayoutHelper.addView(2, 2, 0, 2);
+        gridLayoutHelper.addView(1, 3, 3, 1);
+        gridLayoutHelper.fillAllEmptyItem();
 
-                    drop_container.addView(view);
-                }
-            }
-        }
+        // test duplicate view
+        gridLayoutHelper.addView(0, 1, 0, 2);
+        gridLayoutHelper.addView(2, 2, 0, 2);
+        gridLayoutHelper.addView(1, 3, 3, 1);
+        gridLayoutHelper.fillAllEmptyItem();
+
+        // test duplicate view
+        gridLayoutHelper.addView(0, 1, 0, 2);
+        gridLayoutHelper.addView(2, 2, 0, 2);
+        gridLayoutHelper.addView(1, 3, 3, 1);
+        gridLayoutHelper.fillAllEmptyItem();
+
 
         drop_container.setOnDragListener(new View.OnDragListener() {
             @Override
@@ -165,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                         ImageView imageView = new ImageView(drop_container.getContext());
                         imageView.setImageDrawable(i1.getDrawable());
                         drop_container.addView(imageView);
-                        Log.d("life", "drop x=" + event.getX() + ", y=" + event.getY()+ ", width="+object.getWidth()+", height="+object.getHeight());
+                        Log.d("life", "drop x=" + event.getX() + ", y=" + event.getY() + ", width=" + object.getWidth() + ", height=" + object.getHeight());
                         break;
 
                     // end
@@ -187,13 +129,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
      * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
      * @return A float value to represent px equivalent to dp depending on device density
      */
-    public static float convertDpToPixel(float dp){
+    public static float convertDpToPixel(float dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         float px = dp * (metrics.densityDpi / 160f);
         return px;
     }
 
-    class TagObject{
+    class TagObject {
         private int width;
         private int height;
 
@@ -269,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 
                 // create local state object then retrieve later in ACTION_DROP
-                TagObject tagObject = new TagObject(2,1);
+                TagObject tagObject = new TagObject(2, 1);
 
                 view.startDrag(data, //data to be dragged
                         shadowBuilder, //drag shadow
