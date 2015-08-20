@@ -39,7 +39,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         drop_container = (GridLayout) findViewById(R.id.drop_container);
         GridLayoutHelper gridLayoutHelper = new GridLayoutHelper(drop_container);
-        gridLayoutHelper.notifyDataChanged();
+
+        gridLayoutHelper.addView(2, 3, 3, 1);
+        gridLayoutHelper.notifyGrid();
+        gridLayoutHelper.addView(0, 3, 0, 2);
+        gridLayoutHelper.notifyGrid();
 
 
         drop_container.setOnDragListener(new View.OnDragListener() {

@@ -112,7 +112,7 @@ public class GridLayoutHelper {
     public void addView(int row, int rowSpan, int column, int columnSpan) {
         // check valid column and row
         if (row < totalRowGrid && column < totalColumnGrid) {
-            // TODO: check views in selected zone -> delete view which found -> add view
+            // TODO: check available space to add
 
             // create view properties
             GridItemProperties properties = new GridItemProperties(row, rowSpan, column, columnSpan);
@@ -165,15 +165,15 @@ public class GridLayoutHelper {
     /**
      * fill all empty grid items
      */
-    public void notifyDataChanged() {
+    public void notifyGrid() {
         // fill all empty items
         for (int i = 0; i < totalRowGrid; i++) {
             for (int j = 0; j < totalColumnGrid; j++) {
+                // create view properties
+                GridItemProperties properties = new GridItemProperties(i, 1, j, 1);
+
                 // check if state = false -> add empty grid item
                 if (!state[i][j]) {
-                    // create view properties
-                    GridItemProperties properties = new GridItemProperties(i, 1, j, 1);
-
                     // check view is existed in grid layout ?
                     if (gridLayout.findViewWithTag(properties.getTagFromProperties()) == null) {
                         // create new view with bordered
@@ -195,6 +195,11 @@ public class GridLayoutHelper {
                     } else {
                         Log.d(this.getClass().getName(), "empty view existed -> skip");
                     }
+                } else {
+                    // remove empty if it's used
+                    View view = gridLayout.findViewWithTag(properties.getTagFromProperties());
+                    if(view != null)
+                        gridLayout.removeView(view);
                 }
             }
         }
