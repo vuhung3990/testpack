@@ -119,7 +119,7 @@ public class GridLayoutHelper {
         GridItemProperties properties = new GridItemProperties(row, rowSpan, column, columnSpan);
 
         // check valid column and row
-        if (row < totalRowGrid && column < totalColumnGrid) {
+        if ((row + rowSpan) <= totalRowGrid && (column + columnSpan) <= totalColumnGrid) {
             // TODO: check available space to add
             boolean availableSpace =true;
             for (int i = row; i < row + rowSpan; i++) {
@@ -170,6 +170,8 @@ public class GridLayoutHelper {
                     // add to grid layout
                     gridLayout.addView(button);
                     if(event != null) event.onSuccess(properties);
+                    // refresh grid layout
+                    notifyGrid();
                     Log.d(this.getClass().getName(), "valid -> add new view");
                 } else {
                     if(event != null) event.onDuplicate(properties);

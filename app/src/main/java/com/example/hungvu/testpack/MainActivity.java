@@ -39,10 +39,31 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         drop_container = (GridLayout) findViewById(R.id.drop_container);
         GridLayoutHelper gridLayoutHelper = new GridLayoutHelper(drop_container);
+        gridLayoutHelper.setOnAddItemListener(new GridLayoutHelper.addViewEvent() {
+            @Override
+            public void onSuccess(GridItemProperties properties) {
+                Log.d(getLocalClassName(), "Success: "+properties.getTagFromProperties());
+            }
+
+            @Override
+            public void onDuplicate(GridItemProperties properties) {
+                Log.e(getLocalClassName(), "Duplicate: "+properties.getTagFromProperties());
+            }
+
+            @Override
+            public void onBadParameters(GridItemProperties properties) {
+                Log.e(getLocalClassName(), "Bad params: "+properties.getTagFromProperties());
+            }
+
+            @Override
+            public void onNotEnoughSpace(GridItemProperties properties) {
+                Log.e(getLocalClassName(), "Not enough space: "+properties.getTagFromProperties());
+            }
+        });
         gridLayoutHelper.addView(2, 3, 3, 1);
-        gridLayoutHelper.notifyGrid();
         gridLayoutHelper.addView(0, 3, 0, 2);
-        gridLayoutHelper.notifyGrid();
+        // install invalid column
+        gridLayoutHelper.addView(3, 3, 0,1);
 
 
         drop_container.setOnDragListener(new View.OnDragListener() {
@@ -101,8 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
      */
     public static float convertDpToPixel(float dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return px;
+        return dp * (metrics.densityDpi / 160f);
     }
 
     class TagObject {
