@@ -43,6 +43,11 @@ public class GridLayoutHelper {
      */
     private boolean[][] state;
 
+    /**
+     * for register add event
+     */
+    private addViewEvent event;
+
     public GridLayoutHelper(GridLayout gridLayout) {
         this.gridLayout = gridLayout;
 
@@ -110,56 +115,111 @@ public class GridLayoutHelper {
      * @param columnSpan column size
      */
     public void addView(int row, int rowSpan, int column, int columnSpan) {
+        // create view properties
+        GridItemProperties properties = new GridItemProperties(row, rowSpan, column, columnSpan);
+
         // check valid column and row
         if (row < totalRowGrid && column < totalColumnGrid) {
             // TODO: check available space to add
-
-            // create view properties
-            GridItemProperties properties = new GridItemProperties(row, rowSpan, column, columnSpan);
-
-            // check view is existed in grid layout ?
-            if (gridLayout.findViewWithTag(properties.getTagFromProperties()) == null) {
-                // create new view
-                Button button = new Button(context);
-                // set view's content
-                button.setText("1");
-
-                // row spec (which position row?, rowSpan ?), column spec (which column?, column span ?)
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(row, rowSpan), GridLayout.spec(column, columnSpan));
-                // base unit * width (sample: width = base_unit=50 * columnSpan=2 || height = base_unit=50 * rowSpan=1)
-                params.width = baseUnit * columnSpan;
-                params.height = baseUnit * rowSpan;
-
-                // calculate row spec state ( row + rowSpan is last position of row)
-                for (int i = row; i < row + rowSpan; i++) {
-                    // calculate column spec state
-                    for (int j = column; j < column + columnSpan; j++) {
-                        // set state is true( means it's used )
-                        state[i][j] = true;
+            boolean availableSpace =true;
+            for (int i = row; i < row + rowSpan; i++) {
+                for (int j = column; j < column + columnSpan; j++) {
+                    // if have any invalid space => break now
+                    if(state[i][j]){
+                        availableSpace = false;
+                        break;
                     }
                 }
+            }
 
-                // set layout param
-                button.setLayoutParams(params);
+            if(availableSpace){
+                // check view is existed in grid layout ?
+                if (gridLayout.findViewWithTag(properties.getTagFromProperties()) == null) {
+                    // create new view
+                    Button button = new Button(context);
+                    // set view's content
+                    button.setText("1");
 
-                // set default padding
-                button.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
+                    // row spec (which position row?, rowSpan ?), column spec (which column?, column span ?)
+                    GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(row, rowSpan), GridLayout.spec(column, columnSpan));
+                    // base unit * width (sample: width = base_unit=50 * columnSpan=2 || height = base_unit=50 * rowSpan=1)
+                    params.width = baseUnit * columnSpan;
+                    params.height = baseUnit * rowSpan;
 
-                // set my border (option)
-                button.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.bg_item));
+                    // calculate row spec state ( row + rowSpan is last position of row)
+                    for (int i = row; i < row + rowSpan; i++) {
+                        // calculate column spec state
+                        for (int j = column; j < column + columnSpan; j++) {
+                            // set state is true( means it's used )
+                            state[i][j] = true;
+                        }
+                    }
 
-                // set tag for escape duplicate add same view
-                button.setTag(properties.getTagFromProperties());
+                    // set layout param
+                    button.setLayoutParams(params);
 
-                // add to grid layout
-                gridLayout.addView(button);
-                Log.d(this.getClass().getName(), "not existed -> add new view");
+                    // set default padding
+                    button.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
+
+                    // set my border (option)
+                    button.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.bg_item));
+
+                    // set tag for escape duplicate add same view
+                    button.setTag(properties.getTagFromProperties());
+
+                    // add to grid layout
+                    gridLayout.addView(button);
+                    if(event != null) event.onSuccess(properties);
+                    Log.d(this.getClass().getName(), "valid -> add new view");
+                } else {
+                    if(event != null) event.onDuplicate(properties);
+                    Log.d(this.getClass().getName(), "view existed -> skip");
+                }
             } else {
-                Log.d(this.getClass().getName(), "view existed -> skip");
+                if(event != null) event.onNotEnoughSpace(properties);
+                Log.d(this.getClass().getName(), "column = " + column + " and row = " + row + " not enought space -> skip");
             }
         } else {
+            if(event != null) event.onBadParameters(properties);
             Log.d(this.getClass().getName(), "column = " + column + " and row = " + row + " is not valid -> skip");
         }
+    }
+
+    /**
+     * register add item listener
+     * @param event add view events
+     */
+    public void setOnAddItemListener(addViewEvent event){
+        this.event = event;
+    }
+
+    /**
+     * add event case
+     */
+    public interface addViewEvent{
+        /**
+         * add view success
+         * @param properties item's properties
+         */
+        void onSuccess(GridItemProperties properties);
+
+        /**
+         * item is existed
+         * @param properties item's properties
+         */
+        void onDuplicate(GridItemProperties properties);
+
+        /**
+         * parameter not valid with grid layout (example: column > columnCount of grid layout...)
+         * @param properties item's properties
+         */
+        void onBadParameters(GridItemProperties properties);
+
+        /**
+         * not enough space to add view
+         * @param properties item's properties
+         */
+        void onNotEnoughSpace(GridItemProperties properties);
     }
 
     /**
