@@ -86,4 +86,18 @@ public class GridItemProperties {
     public String getTagFromProperties(){
         return String.format("%d_%d_%d_%d", row, rowSpan, column, columnSpan);
     }
+
+    /**
+     * retrieve object from tag
+     * @see #getTagFromProperties()
+     * @param tag String tag format
+     * @return GridItemProperties or throw exception if not valid format
+     */
+    public static GridItemProperties retrieveObjectFromTag(String tag){
+        String[] retrieve = tag.split("_");
+        // 4 is parameters [ String.format("%d_%d_%d_%d", row, rowSpan, column, columnSpan) ]
+        if (retrieve.length != 4) throw new GridLayoutHelper.MyCustomException("can't retrive object from tag" ,"tag format not valid");
+        else
+            return  new GridItemProperties(Integer.parseInt(retrieve[0]), Integer.parseInt(retrieve[1]), Integer.parseInt(retrieve[2]), Integer.parseInt(retrieve[3]));
+    }
 }

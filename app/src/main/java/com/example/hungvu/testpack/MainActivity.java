@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private ImageView i2;
     private GridLayout drop_container;
     private LayoutInflater inflater;
+    private GridLayoutHelper gridLayoutHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,39 +39,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         i1.setOnTouchListener(this);
 
         drop_container = (GridLayout) findViewById(R.id.drop_container);
-        GridLayoutHelper gridLayoutHelper = new GridLayoutHelper(drop_container);
-        gridLayoutHelper.setOnAddItemListener(new GridLayoutHelper.addViewEvent() {
-            @Override
-            public void onSuccess(GridItemProperties properties) {
-                Log.d(getLocalClassName(), "Success: " + properties.getTagFromProperties());
-            }
 
+        // event
+        View.OnDragListener dragListener = new View.OnDragListener() {
             @Override
-            public void onDuplicate(GridItemProperties properties) {
-                Log.e(getLocalClassName(), "Duplicate: " + properties.getTagFromProperties());
-            }
-
-            @Override
-            public void onBadParameters(GridItemProperties properties) {
-                Log.e(getLocalClassName(), "Bad params: " + properties.getTagFromProperties());
-            }
-
-            @Override
-            public void onNotEnoughSpace(GridItemProperties properties) {
-                Log.e(getLocalClassName(), "Not enough space: " + properties.getTagFromProperties());
-            }
-        });
-        gridLayoutHelper.addView(2, 3, 3, 1);
-        gridLayoutHelper.addView(0, 3, 0, 2);
-        // install invalid param ( Bad params: 3_3_0_1 )
-        gridLayoutHelper.addView(3, 3, 0, 1);
-        // install out of bound position ( Not enough space: 1_2_1_2 )
-        gridLayoutHelper.addView(1, 2, 1, 2);
-
-
-        drop_container.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View view, DragEvent event) {
+            public boolean onDrag(View v, DragEvent event) {
                 switch (event.getAction()) {
                     // start
                     case DragEvent.ACTION_DRAG_STARTED:
@@ -94,15 +67,19 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                     // x, y last change here
                     case DragEvent.ACTION_DROP:
-                        // retrieve object state here
-                        TagObject object = (TagObject) event.getLocalState();
+                        // retrieve size of drag object
+                        DragObject object = (DragObject) event.getLocalState();
+                        Log.d("life", object.getWidth()+":"+object.getHeight());
 
+                        // retrive drop position
+                        GridItemProperties properties = GridItemProperties.retrieveObjectFromTag((String) v.getTag());
+                        gridLayoutHelper.addView(properties.getRow(), object.getHeight(), properties.getColumn(), object.getWidth());
 
-                        Log.d("aaa", view.getId()+"..."+drop_container.getId());
-
-                        ImageView imageView = new ImageView(drop_container.getContext());
-                        imageView.setImageDrawable(i1.getDrawable());
-                        drop_container.addView(imageView);
+//                        Log.d("aaa", view.getId()+"..."+drop_container.getId());
+//
+//                        ImageView imageView = new ImageView(drop_container.getContext());
+//                        imageView.setImageDrawable(i1.getDrawable());
+//                        drop_container.addView(imageView);
                         Log.d("life", "drop x=" + event.getX() + ", y=" + event.getY() + ", width=" + object.getWidth() + ", height=" + object.getHeight());
                         break;
 
@@ -116,7 +93,90 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 }
                 return true;
             }
+        };
+
+        gridLayoutHelper = new GridLayoutHelper(drop_container, dragListener);
+        gridLayoutHelper.setOnAddItemListener(new GridLayoutHelper.addViewEvent() {
+            @Override
+            public void onSuccess(GridItemProperties properties) {
+                Log.e(getLocalClassName(), "Success: " + properties.getTagFromProperties());
+            }
+
+            @Override
+            public void onDuplicate(GridItemProperties properties) {
+                Log.e(getLocalClassName(), "Duplicate: " + properties.getTagFromProperties());
+            }
+
+            @Override
+            public void onBadParameters(GridItemProperties properties) {
+                Log.e(getLocalClassName(), "Bad params: " + properties.getTagFromProperties());
+            }
+
+            @Override
+            public void onNotEnoughSpace(GridItemProperties properties) {
+                Log.e(getLocalClassName(), "Not enough space: " + properties.getTagFromProperties());
+            }
         });
+
+        gridLayoutHelper.addView(0, 1, 4, 1);
+
+//        gridLayoutHelper.addView(2, 3, 3, 1);
+//        gridLayoutHelper.addView(0, 3, 0, 2);
+//        // install invalid param ( Bad params: 3_3_0_1 )
+//        gridLayoutHelper.addView(3, 3, 0, 1);
+//        // install out of bound position ( Not enough space: 1_2_1_2 )
+//        gridLayoutHelper.addView(1, 2, 1, 2);
+
+
+//        drop_container.setOnDragListener(new View.OnDragListener() {
+//            @Override
+//            public boolean onDrag(View view, DragEvent event) {
+//                switch (event.getAction()) {
+//                    // start
+//                    case DragEvent.ACTION_DRAG_STARTED:
+//                        Log.d("life", "started");
+//                        break;
+//
+//                    // start sending location and when user hover
+//                    case DragEvent.ACTION_DRAG_ENTERED:
+//                        Log.d("life", "entered");
+//                        break;
+//
+//                    // get x, y here
+//                    case DragEvent.ACTION_DRAG_LOCATION:
+//                        Log.d("life", "X=" + event.getX() + ", Y=" + event.getY());
+//                        break;
+//
+//                    // stop sending location if leave view
+//                    case DragEvent.ACTION_DRAG_EXITED:
+//                        Log.d("life", "exited");
+//                        break;
+//
+//                    // x, y last change here
+//                    case DragEvent.ACTION_DROP:
+//                        // retrieve object state here
+//                        DragObject object = (DragObject) event.getLocalState();
+//
+//
+//                        Log.d("aaa", view.getId()+"..."+drop_container.getId());
+//
+//                        ImageView imageView = new ImageView(drop_container.getContext());
+//                        imageView.setImageDrawable(i1.getDrawable());
+//                        drop_container.addView(imageView);
+//                        Log.d("life", "drop x=" + event.getX() + ", y=" + event.getY() + ", width=" + object.getWidth() + ", height=" + object.getHeight());
+//                        break;
+//
+//                    // end
+//                    case DragEvent.ACTION_DRAG_ENDED:
+//
+//                        // show for test
+//                        i1.setVisibility(View.VISIBLE);
+//                        Log.d("life", "ended");
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
     }
 
     /**
@@ -130,11 +190,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         return dp * (metrics.densityDpi / 160f);
     }
 
-    class TagObject {
+    class DragObject {
         private int width;
         private int height;
 
-        public TagObject(int width, int height) {
+        public DragObject(int width, int height) {
             this.width = width;
             this.height = height;
         }
@@ -206,11 +266,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 
                 // create local state object then retrieve later in ACTION_DROP
-                TagObject tagObject = new TagObject(2, 1);
+                DragObject dragObject = new DragObject(3, 1);
 
                 view.startDrag(data, //data to be dragged
                         shadowBuilder, //drag shadow
-                        tagObject, //local data about the drag and drop operation
+                        dragObject, //local data about the drag and drop operation
                         0   //no needed flags
                 );
 

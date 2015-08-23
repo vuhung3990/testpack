@@ -13,6 +13,10 @@ import android.widget.GridLayout;
  */
 public class GridLayoutHelper {
     /**
+     * Drag listener on each item cell
+     */
+    private final View.OnDragListener onDragListener;
+    /**
      * screen width / totalColumnGrid
      */
     private int baseUnit = 0;
@@ -48,8 +52,9 @@ public class GridLayoutHelper {
      */
     private addViewEvent event;
 
-    public GridLayoutHelper(GridLayout gridLayout) {
+    public GridLayoutHelper(GridLayout gridLayout, View.OnDragListener dragListener) {
         this.gridLayout = gridLayout;
+        this.onDragListener = dragListener;
 
         // get context from grid layout
         context = gridLayout.getContext();
@@ -123,7 +128,7 @@ public class GridLayoutHelper {
 
         // check valid column and row
         if ((row + rowSpan) <= totalRowGrid && (column + columnSpan) <= totalColumnGrid) {
-            // TODO: check available space to add
+            //  check available space to add
             boolean availableSpace = true;
             for (int i = row; i < row + rowSpan; i++) {
                 for (int j = column; j < column + columnSpan; j++) {
@@ -170,23 +175,26 @@ public class GridLayoutHelper {
                     // set tag for escape duplicate add same view
                     button.setTag(properties.getTagFromProperties());
 
+                    // set drag listener
+                    button.setOnDragListener(onDragListener);
+
                     // add to grid layout
                     gridLayout.addView(button);
                     if (event != null) event.onSuccess(properties);
                     // refresh grid layout
                     notifyGrid();
-                    Log.d(this.getClass().getName(), "valid -> add new view");
+                    Log.e(this.getClass().getName(), "valid -> add new view");
                 } else {
                     if (event != null) event.onDuplicate(properties);
-                    Log.d(this.getClass().getName(), "view existed -> skip");
+                    Log.e(this.getClass().getName(), "view existed -> skip");
                 }
             } else {
                 if (event != null) event.onNotEnoughSpace(properties);
-                Log.d(this.getClass().getName(), "column = " + column + " and row = " + row + " not enought space -> skip");
+                Log.e(this.getClass().getName(), "column = " + column + " and row = " + row + " not enought space -> skip");
             }
         } else {
             if (event != null) event.onBadParameters(properties);
-            Log.d(this.getClass().getName(), "column = " + column + " and row = " + row + " is not valid -> skip");
+            Log.e(this.getClass().getName(), "column = " + column + " and row = " + row + " is not valid -> skip");
         }
     }
 
@@ -240,7 +248,7 @@ public class GridLayoutHelper {
         for (int i = 0; i < totalRowGrid; i++) {
             for (int j = 0; j < totalColumnGrid; j++) {
                 // create view properties
-                GridItemProperties properties = new GridItemProperties(i, 1, j, 1);
+                GridItemProperties properties = new GridItemProperties(i, -1, j, -1);
 
                 // check if state = false -> add empty grid item
                 if (!state[i][j]) {
@@ -257,13 +265,16 @@ public class GridLayoutHelper {
                         view.setLayoutParams(paramsEmpty);
 
                         // set tag for escape duplicate add same view
-                        view.setTag(properties.getTagFromProperties());
+                        view.setTag(String.format("%d_%d_%d_%d", properties.getRow(), -1, properties.getColumn(), -1));
+
+                        // setDragListener
+                        view.setOnDragListener(onDragListener);
 
                         // add to grid layout
                         gridLayout.addView(view);
-                        Log.d(this.getClass().getName(), "not existed -> add new empty view");
+                        Log.e(this.getClass().getName(), "not existed -> add new empty view");
                     } else {
-                        Log.d(this.getClass().getName(), "empty view existed -> skip");
+                        Log.e(this.getClass().getName(), "empty view existed -> skip");
                     }
                 } else {
                     // remove empty if it's used
