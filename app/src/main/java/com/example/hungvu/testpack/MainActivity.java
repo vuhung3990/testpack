@@ -42,28 +42,30 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         gridLayoutHelper.setOnAddItemListener(new GridLayoutHelper.addViewEvent() {
             @Override
             public void onSuccess(GridItemProperties properties) {
-                Log.d(getLocalClassName(), "Success: "+properties.getTagFromProperties());
+                Log.d(getLocalClassName(), "Success: " + properties.getTagFromProperties());
             }
 
             @Override
             public void onDuplicate(GridItemProperties properties) {
-                Log.e(getLocalClassName(), "Duplicate: "+properties.getTagFromProperties());
+                Log.e(getLocalClassName(), "Duplicate: " + properties.getTagFromProperties());
             }
 
             @Override
             public void onBadParameters(GridItemProperties properties) {
-                Log.e(getLocalClassName(), "Bad params: "+properties.getTagFromProperties());
+                Log.e(getLocalClassName(), "Bad params: " + properties.getTagFromProperties());
             }
 
             @Override
             public void onNotEnoughSpace(GridItemProperties properties) {
-                Log.e(getLocalClassName(), "Not enough space: "+properties.getTagFromProperties());
+                Log.e(getLocalClassName(), "Not enough space: " + properties.getTagFromProperties());
             }
         });
         gridLayoutHelper.addView(2, 3, 3, 1);
         gridLayoutHelper.addView(0, 3, 0, 2);
-        // install invalid column
-        gridLayoutHelper.addView(3, 3, 0,1);
+        // install invalid param ( Bad params: 3_3_0_1 )
+        gridLayoutHelper.addView(3, 3, 0, 1);
+        // install out of bound position ( Not enough space: 1_2_1_2 )
+        gridLayoutHelper.addView(1, 2, 1, 2);
 
 
         drop_container.setOnDragListener(new View.OnDragListener() {
@@ -94,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     case DragEvent.ACTION_DROP:
                         // retrieve object state here
                         TagObject object = (TagObject) event.getLocalState();
+
+
+                        Log.d("aaa", view.getId()+"..."+drop_container.getId());
 
                         ImageView imageView = new ImageView(drop_container.getContext());
                         imageView.setImageDrawable(i1.getDrawable());

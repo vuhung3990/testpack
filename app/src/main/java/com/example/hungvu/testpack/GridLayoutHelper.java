@@ -68,19 +68,21 @@ public class GridLayoutHelper {
         } else {
             // TODO: calculate base unit
             this.baseUnit = context.getResources().getDisplayMetrics().widthPixels / totalColumnGrid;
+            notifyGrid();
         }
     }
 
     /**
-     *  don't care about this class, custom throwable message
-     *  usage : throw new MyCustomException("Please set GridLayout's columnCount and rowCount in XML or programmatically.");
+     * don't care about this class, custom throwable message
+     * usage : throw new MyCustomException("Please set GridLayout's columnCount and rowCount in XML or programmatically.");
      */
-    public static class MyCustomException extends RuntimeException{
+    public static class MyCustomException extends RuntimeException {
         private final String message;
         private String title = "([ ERROR ])";
 
         /**
          * Custom throwable with message with default title
+         *
          * @param message your message
          */
         public MyCustomException(String message) {
@@ -89,10 +91,11 @@ public class GridLayoutHelper {
 
         /**
          * Custom throwable with message and title
+         *
          * @param message your message
-         * @param title title of message
+         * @param title   title of message
          */
-        public MyCustomException(String message, String title){
+        public MyCustomException(String message, String title) {
             this.message = message;
             this.title = title;
         }
@@ -121,18 +124,18 @@ public class GridLayoutHelper {
         // check valid column and row
         if ((row + rowSpan) <= totalRowGrid && (column + columnSpan) <= totalColumnGrid) {
             // TODO: check available space to add
-            boolean availableSpace =true;
+            boolean availableSpace = true;
             for (int i = row; i < row + rowSpan; i++) {
                 for (int j = column; j < column + columnSpan; j++) {
                     // if have any invalid space => break now
-                    if(state[i][j]){
+                    if (state[i][j]) {
                         availableSpace = false;
                         break;
                     }
                 }
             }
 
-            if(availableSpace){
+            if (availableSpace) {
                 // check view is existed in grid layout ?
                 if (gridLayout.findViewWithTag(properties.getTagFromProperties()) == null) {
                     // create new view
@@ -169,56 +172,61 @@ public class GridLayoutHelper {
 
                     // add to grid layout
                     gridLayout.addView(button);
-                    if(event != null) event.onSuccess(properties);
+                    if (event != null) event.onSuccess(properties);
                     // refresh grid layout
                     notifyGrid();
                     Log.d(this.getClass().getName(), "valid -> add new view");
                 } else {
-                    if(event != null) event.onDuplicate(properties);
+                    if (event != null) event.onDuplicate(properties);
                     Log.d(this.getClass().getName(), "view existed -> skip");
                 }
             } else {
-                if(event != null) event.onNotEnoughSpace(properties);
+                if (event != null) event.onNotEnoughSpace(properties);
                 Log.d(this.getClass().getName(), "column = " + column + " and row = " + row + " not enought space -> skip");
             }
         } else {
-            if(event != null) event.onBadParameters(properties);
+            if (event != null) event.onBadParameters(properties);
             Log.d(this.getClass().getName(), "column = " + column + " and row = " + row + " is not valid -> skip");
         }
     }
 
     /**
      * register add item listener
+     *
      * @param event add view events
      */
-    public void setOnAddItemListener(addViewEvent event){
+    public void setOnAddItemListener(addViewEvent event) {
         this.event = event;
     }
 
     /**
      * add event case
      */
-    public interface addViewEvent{
+    public interface addViewEvent {
         /**
          * add view success
+         *
          * @param properties item's properties
          */
         void onSuccess(GridItemProperties properties);
 
         /**
          * item is existed
+         *
          * @param properties item's properties
          */
         void onDuplicate(GridItemProperties properties);
 
         /**
          * parameter not valid with grid layout (example: column > columnCount of grid layout...)
+         *
          * @param properties item's properties
          */
         void onBadParameters(GridItemProperties properties);
 
         /**
          * not enough space to add view
+         *
          * @param properties item's properties
          */
         void onNotEnoughSpace(GridItemProperties properties);
@@ -260,7 +268,7 @@ public class GridLayoutHelper {
                 } else {
                     // remove empty if it's used
                     View view = gridLayout.findViewWithTag(properties.getTagFromProperties());
-                    if(view != null)
+                    if (view != null)
                         gridLayout.removeView(view);
                 }
             }
