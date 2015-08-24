@@ -5,18 +5,17 @@
     tools:context=".MainActivity">
 
     <GridLayout
-        android:isScrollContainer="true"
         android:id="@+id/drop_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="false"
-        android:columnCount="5"
-        android:rowCount="5"
         android:layout_alignParentTop="true"
+        android:columnCount="5"
+        android:isScrollContainer="true"
         android:orientation="vertical"
-        android:rowOrderPreserved="true">
-    </GridLayout>
+        android:rowCount="5"
+        android:rowOrderPreserved="true" />
 
     <FrameLayout
         android:id="@+id/drag_container"
@@ -27,12 +26,37 @@
         android:layout_alignParentStart="true"
         android:background="#458819">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <TextView
+            android:text="1x1"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:id="@+id/imageView1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="left|top"
-            android:clickable="true"
-            android:src="@mipmap/ic_launcher" />
+            android:background="#000"
+            android:clickable="true" />
+
+        <TextView
+            android:text="2x2"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:id="@+id/imageView2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:background="#4d27e2"
+            android:clickable="true" />
+
+        <TextView
+            android:text="2x1"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:id="@+id/imageView3"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_gravity="right|center"
+            android:background="#d4100d"
+            android:clickable="true" />
     </FrameLayout>
 </RelativeLayout>

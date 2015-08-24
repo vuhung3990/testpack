@@ -14,14 +14,14 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridLayout;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private static final String IMAGEVIEW_TAG = "aaaaaa";
-    private ImageView i3;
-    private ImageView i1;
-    private ImageView i2;
+    private TextView i3;
+    private TextView i1;
+    private TextView i2;
     private GridLayout drop_container;
     private LayoutInflater inflater;
     private GridLayoutHelper gridLayoutHelper;
@@ -32,11 +32,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_main);
 
         inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        i1 = (ImageView) findViewById(R.id.imageView);
+        i1 = (TextView) findViewById(R.id.imageView1);
+        i2 = (TextView) findViewById(R.id.imageView2);
+        i3 = (TextView) findViewById(R.id.imageView3);
 
         // set the tag
         i1.setTag(IMAGEVIEW_TAG);
         i1.setOnTouchListener(this);
+
+        i2.setTag(IMAGEVIEW_TAG);
+        i2.setOnTouchListener(this);
+
+        i3.setTag(IMAGEVIEW_TAG);
+        i3.setOnTouchListener(this);
+
 
         drop_container = (GridLayout) findViewById(R.id.drop_container);
 
@@ -44,6 +53,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         View.OnDragListener dragListener = new View.OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent event) {
+                // retrive drop position
+                GridItemProperties properties = GridItemProperties.retrieveObjectFromTag((String) v.getTag());
+
+                // retrieve size of drag object
+                DragObject object = (DragObject) event.getLocalState();
+                Log.d("life", object.getWidth()+":"+object.getHeight());
+
                 switch (event.getAction()) {
                     // start
                     case DragEvent.ACTION_DRAG_STARTED:
@@ -58,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     // get x, y here
                     case DragEvent.ACTION_DRAG_LOCATION:
                         Log.d("life", "X=" + event.getX() + ", Y=" + event.getY());
+
                         break;
 
                     // stop sending location if leave view
@@ -67,12 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                     // x, y last change here
                     case DragEvent.ACTION_DROP:
-                        // retrieve size of drag object
-                        DragObject object = (DragObject) event.getLocalState();
-                        Log.d("life", object.getWidth()+":"+object.getHeight());
 
-                        // retrive drop position
-                        GridItemProperties properties = GridItemProperties.retrieveObjectFromTag((String) v.getTag());
                         gridLayoutHelper.addView(properties.getRow(), object.getHeight(), properties.getColumn(), object.getWidth());
 
 //                        Log.d("aaa", view.getId()+"..."+drop_container.getId());
@@ -88,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                         // show for test
                         i1.setVisibility(View.VISIBLE);
+                        i2.setVisibility(View.VISIBLE);
+                        i3.setVisibility(View.VISIBLE);
                         Log.d("life", "ended");
                         break;
                 }
@@ -117,8 +131,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 Log.e(getLocalClassName(), "Not enough space: " + properties.getTagFromProperties());
             }
         });
-
-        gridLayoutHelper.addView(0, 1, 4, 1);
 
 //        gridLayoutHelper.addView(2, 3, 3, 1);
 //        gridLayoutHelper.addView(0, 3, 0, 2);
@@ -266,7 +278,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 
                 // create local state object then retrieve later in ACTION_DROP
-                DragObject dragObject = new DragObject(3, 1);
+                DragObject dragObject = null;
+                if(view.getId() == i1.getId()){
+                    dragObject = new DragObject(1, 1);
+                }else if(view.getId() == i2.getId()){
+                    dragObject = new DragObject(2, 2);
+                }else if(view.getId() == i3.getId()){
+                    dragObject = new DragObject(2, 1);
+                }
 
                 view.startDrag(data, //data to be dragged
                         shadowBuilder, //drag shadow
