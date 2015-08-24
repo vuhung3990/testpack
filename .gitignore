@@ -5,3 +5,10 @@
 .DS_Store
 /build
 /captures
+gradlew
+.idea/dictionaries/
+.idea/inspectionProfiles/
+.merge_file_CITEQj
+0001-add-modulegcm.patch
+TestPack.iml
+*.orig
