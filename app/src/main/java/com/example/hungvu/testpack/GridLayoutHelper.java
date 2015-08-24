@@ -1,10 +1,13 @@
 package com.example.hungvu.testpack;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -123,7 +126,7 @@ public class GridLayoutHelper {
      * @param column     position column
      * @param columnSpan column size
      */
-    public void addView(int row, int rowSpan, int column, int columnSpan) {
+    public void addView(final int row, final int rowSpan, final int column, final int columnSpan) {
         // create view properties
         GridItemProperties properties = new GridItemProperties(row, rowSpan, column, columnSpan);
 
@@ -179,6 +182,45 @@ public class GridLayoutHelper {
                     // set drag listener
                     button.setOnDragListener(onDragListener);
 
+                    button.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent event) {
+                            switch (event.getAction()) {
+                                case MotionEvent.ACTION_DOWN:
+                                    // create it from the object's tag
+                                    ClipData.Item item = new ClipData.Item((CharSequence) view.getTag());
+
+                                    String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+                                    ClipData data = new ClipData(view.getTag().toString(), mimeTypes, item);
+                                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+
+                                    // create local state object then retrieve later in ACTION_DROP
+                                    GridLayoutHelper.DragObject dragObject = new DragObject(columnSpan, rowSpan);
+                                    // set info for re-order item
+                                    dragObject.setAction(DragObject.DragUserAction.RE_ORDER, row, column);
+
+                                    // remove view state
+                                    for (int i = row; i < row + rowSpan; i++) {
+                                        for (int j = column; j < column + columnSpan; j++) {
+                                            state[i][j] = false;
+                                        }
+                                    }
+                                    // update grid items
+                                    notifyGrid();
+                                    view.setVisibility(View.INVISIBLE);
+
+                                    // start drag view
+                                    view.startDrag(data, //data to be dragged
+                                            shadowBuilder, //drag shadow
+                                            dragObject, //local data about the drag and drop operation
+                                            0   //no needed flags
+                                    );
+                                    return true;
+                            }
+                            return false;
+                        }
+                    });
+
                     // add to grid layout
                     gridLayout.addView(button);
                     if (event != null) event.onSuccess(properties);
@@ -197,6 +239,24 @@ public class GridLayoutHelper {
             if (event != null) event.onBadParameters(properties);
             Log.e(this.getClass().getName(), "column = " + column + " and row = " + row + " is not valid -> skip");
         }
+    }
+
+    /**
+     * remove view item in grid layout
+     *
+     * @param properties for find view item
+     */
+    public void removeViewInGrid(GridItemProperties properties) {
+        if (gridLayout != null) {
+            // find view item with tag
+            View view = gridLayout.findViewWithTag(properties.getTagFromProperties());
+            if (view != null) {
+                gridLayout.removeView(view);
+            } else {
+                Log.e(getClass().getSimpleName(), "", new MyCustomException("can't find view with tag: " + properties.getTagFromProperties()));
+            }
+        } else
+            throw new MyCustomException("grid layout is null, please init before use this.");
     }
 
     /**
@@ -419,6 +479,12 @@ public class GridLayoutHelper {
      */
     public static class DragObject {
         /**
+         * action from user
+         *
+         * @see com.example.hungvu.testpack.GridLayoutHelper.DragObject.DragUserAction
+         */
+        private DragUserAction action;
+        /**
          * width of drag view
          */
         private int width;
@@ -426,6 +492,19 @@ public class GridLayoutHelper {
          * height of drag view
          */
         private int height;
+        /**
+         * column of current item grid (for re-order)
+         */
+        private int column;
+
+        /**
+         * column of current item grid (for re-order)
+         */
+        private int row;
+
+        public enum DragUserAction {
+            ADD_NEW, RE_ORDER;
+        }
 
         /**
          * Constructor
@@ -436,6 +515,61 @@ public class GridLayoutHelper {
         public DragObject(int width, int height) {
             this.width = width;
             this.height = height;
+
+            // default
+            action = DragUserAction.ADD_NEW;
+            column = -1;
+            row = -1;
+        }
+
+        /**
+         * @return current item row
+         */
+        public int getRow() {
+            return row;
+        }
+
+        /**
+         * set row
+         *
+         * @param row
+         */
+        public void setRow(int row) {
+            this.row = row;
+        }
+
+        /**
+         * @return current item column
+         */
+        public int getColumn() {
+            return column;
+        }
+
+        /**
+         * set column
+         *
+         * @param column
+         */
+        public void setColumn(int column) {
+            this.column = column;
+        }
+
+        /**
+         * set user action
+         *
+         * @param action
+         */
+        public void setAction(DragUserAction action, int row, int column) {
+            this.action = action;
+            this.row = row;
+            this.column = column;
+        }
+
+        /**
+         * @return user action
+         */
+        public DragUserAction getAction() {
+            return action;
         }
 
         /**
@@ -448,7 +582,7 @@ public class GridLayoutHelper {
         /**
          * set width
          *
-         * @param width
+         * @param width item's width
          */
         public void setWidth(int width) {
             this.width = width;
@@ -464,7 +598,7 @@ public class GridLayoutHelper {
         /**
          * set height
          *
-         * @param height
+         * @param height item's height
          */
         public void setHeight(int height) {
             this.height = height;

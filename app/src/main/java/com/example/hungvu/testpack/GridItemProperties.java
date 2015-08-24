@@ -1,7 +1,7 @@
 package com.example.hungvu.testpack;
 
 /**
- * Created by Tuandv on 19-Aug-15.
+ * grid item properties
  */
 public class GridItemProperties {
     private int column;
@@ -9,6 +9,14 @@ public class GridItemProperties {
     private int columnSpan;
     private int rowSpan;
 
+    /**
+     * grid item properties
+     *
+     * @param row        position row
+     * @param rowSpan    row size
+     * @param column     position column
+     * @param columnSpan column size
+     */
     public GridItemProperties(int row, int rowSpan, int column, int columnSpan) {
         this.column = column;
         this.row = row;
@@ -83,21 +91,23 @@ public class GridItemProperties {
     /**
      * @return unique tag from properties
      */
-    public String getTagFromProperties(){
+    public String getTagFromProperties() {
         return String.format("%d_%d_%d_%d", row, rowSpan, column, columnSpan);
     }
 
     /**
      * retrieve object from tag
-     * @see #getTagFromProperties()
+     *
      * @param tag String tag format
      * @return GridItemProperties or throw exception if not valid format
+     * @see #getTagFromProperties()
      */
-    public static GridItemProperties retrieveObjectFromTag(String tag){
+    public static GridItemProperties retrieveObjectFromTag(String tag) {
         String[] retrieve = tag.split("_");
         // 4 is parameters [ String.format("%d_%d_%d_%d", row, rowSpan, column, columnSpan) ]
-        if (retrieve.length != 4) throw new GridLayoutHelper.MyCustomException("can't retrive object from tag" ,"tag format not valid");
+        if (retrieve.length != 4)
+            throw new GridLayoutHelper.MyCustomException("can't retrive object from tag", "tag format not valid");
         else
-            return  new GridItemProperties(Integer.parseInt(retrieve[0]), Integer.parseInt(retrieve[1]), Integer.parseInt(retrieve[2]), Integer.parseInt(retrieve[3]));
+            return new GridItemProperties(Integer.parseInt(retrieve[0]), Integer.parseInt(retrieve[1]), Integer.parseInt(retrieve[2]), Integer.parseInt(retrieve[3]));
     }
 }

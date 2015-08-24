@@ -88,7 +88,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                     // x, y last change here
                     case DragEvent.ACTION_DROP:
-
+                        // if re-order item, i will remove it before add new item
+                        if(object.getAction() == DragObject.DragUserAction.RE_ORDER){
+                            GridItemProperties itemProperties = new GridItemProperties(object.getRow(), object.getHeight(), object.getColumn(), object.getWidth());
+                            gridLayoutHelper.removeViewInGrid(itemProperties);
+                        }
                         gridLayoutHelper.addView(properties.getRow(), object.getHeight(), properties.getColumn(), object.getWidth());
 
 //                        Log.d("aaa", view.getId()+"..."+drop_container.getId());
