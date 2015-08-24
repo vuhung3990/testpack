@@ -1,40 +1,62 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
     <GridLayout
         android:id="@+id/drop_container"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:columnCount="4"
-        android:rowCount="5"
-        android:rowOrderPreserved="true"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true">
-    </GridLayout>
+        android:layout_alignParentRight="false"
+        android:layout_alignParentTop="true"
+        android:columnCount="5"
+        android:isScrollContainer="true"
+        android:orientation="vertical"
+        android:rowCount="5"
+        android:rowOrderPreserved="true" />
 
     <FrameLayout
+        android:id="@+id/drag_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/drop_container"
         android:background="#458819">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <TextView
+            android:text="1x1"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:id="@+id/imageView1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="left|top"
-            android:clickable="true"
-            android:src="@mipmap/ic_launcher" />
+            android:background="#000"
+            android:clickable="true" />
+
+        <TextView
+            android:text="2x2"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:id="@+id/imageView2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:background="#4d27e2"
+            android:clickable="true" />
+
+        <TextView
+            android:text="2x1"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:id="@+id/imageView3"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_gravity="right|center"
+            android:background="#d4100d"
+            android:clickable="true" />
     </FrameLayout>
 </RelativeLayout>
