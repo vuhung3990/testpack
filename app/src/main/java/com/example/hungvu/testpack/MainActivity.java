@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.TextView;
 
+import static com.example.hungvu.testpack.GridLayoutHelper.*;
+
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private static final String IMAGEVIEW_TAG = "aaaaaa";
@@ -53,12 +55,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         View.OnDragListener dragListener = new View.OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent event) {
-                // retrive drop position
+                // retrieve drop position
                 GridItemProperties properties = GridItemProperties.retrieveObjectFromTag((String) v.getTag());
 
                 // retrieve size of drag object
-                DragObject object = (DragObject) event.getLocalState();
-                Log.d("life", object.getWidth()+":"+object.getHeight());
+                GridLayoutHelper.DragObject object = (GridLayoutHelper.DragObject) event.getLocalState();
+                Log.d("life", object.getWidth() + ":" + object.getHeight());
 
                 switch (event.getAction()) {
                     // start
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                     // start sending location and when user hover
                     case DragEvent.ACTION_DRAG_ENTERED:
+                        gridLayoutHelper.setColorHint(properties.getRow(), object.getHeight(), properties.getColumn(), object.getWidth(), true);
                         Log.d("life", "entered");
                         break;
 
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                     // stop sending location if leave view
                     case DragEvent.ACTION_DRAG_EXITED:
+                        gridLayoutHelper.setColorHint(properties.getRow(), object.getHeight(), properties.getColumn(), object.getWidth(), false);
                         Log.d("life", "exited");
                         break;
 
@@ -110,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         };
 
         gridLayoutHelper = new GridLayoutHelper(drop_container, dragListener);
-        gridLayoutHelper.setOnAddItemListener(new GridLayoutHelper.addViewEvent() {
+        gridLayoutHelper.setOnAddItemListener(new addViewEvent() {
             @Override
             public void onSuccess(GridItemProperties properties) {
                 Log.e(getLocalClassName(), "Success: " + properties.getTagFromProperties());
@@ -202,48 +206,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         return dp * (metrics.densityDpi / 160f);
     }
 
-    class DragObject {
-        private int width;
-        private int height;
-
-        public DragObject(int width, int height) {
-            this.width = width;
-            this.height = height;
-        }
-
-        /**
-         * @return width
-         */
-        public int getWidth() {
-            return width;
-        }
-
-        /**
-         * set width
-         *
-         * @param width
-         */
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        /**
-         * @return height
-         */
-        public int getHeight() {
-            return height;
-        }
-
-        /**
-         * set height
-         *
-         * @param height
-         */
-        public void setHeight(int height) {
-            this.height = height;
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -278,13 +240,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 
                 // create local state object then retrieve later in ACTION_DROP
-                DragObject dragObject = null;
-                if(view.getId() == i1.getId()){
-                    dragObject = new DragObject(1, 1);
-                }else if(view.getId() == i2.getId()){
-                    dragObject = new DragObject(2, 2);
-                }else if(view.getId() == i3.getId()){
-                    dragObject = new DragObject(2, 1);
+                GridLayoutHelper.DragObject dragObject = null;
+                if (view.getId() == i1.getId()) {
+                    dragObject = new GridLayoutHelper.DragObject(1, 1);
+                } else if (view.getId() == i2.getId()) {
+                    dragObject = new GridLayoutHelper.DragObject(2, 2);
+                } else if (view.getId() == i3.getId()) {
+                    dragObject = new GridLayoutHelper.DragObject(2, 1);
                 }
 
                 view.startDrag(data, //data to be dragged

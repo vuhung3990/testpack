@@ -2,6 +2,7 @@ package com.example.hungvu.testpack;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -366,5 +367,107 @@ public class GridLayoutHelper {
     public static float convertDpToPixel(float dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         return dp * (metrics.densityDpi / 160f);
+    }
+
+    /**
+     * set color hint on DragEvent.ACTION_DRAG_ENTERED and DragEvent.ACTION_DRAG_EXITED
+     *
+     * @param row        position row
+     * @param rowSpan    row size
+     * @param column     position column
+     * @param columnSpan column size
+     * @param isEnter    set true if call in DragEvent.ACTION_DRAG_ENTERED, false in other
+     */
+    public void setColorHint(int row, int rowSpan, int column, int columnSpan, boolean isEnter) {
+        // check valid column and row
+        if ((row + rowSpan) <= totalRowGrid && (column + columnSpan) <= totalColumnGrid) {
+            //  check available space to add
+            boolean availableSpace = true;
+            for (int i = row; i < row + rowSpan; i++) {
+                for (int j = column; j < column + columnSpan; j++) {
+                    // if have any invalid space => break now
+                    if (state[i][j]) {
+                        availableSpace = false;
+                        break;
+                    }
+                }
+            }
+
+            // set background
+            if (availableSpace) {
+                for (int i = row; i < row + rowSpan; i++) {
+                    for (int j = column; j < column + columnSpan; j++) {
+                        // retrieve info
+                        GridItemProperties properties = new GridItemProperties(i, -1, j, -1);
+                        View view = gridLayout.findViewWithTag(properties.getTagFromProperties());
+                        // check view not null ( maybe unnecessary but safer )
+                        if (view != null) {
+                            // on DragEvent.ACTION_DRAG_ENTERED set color
+                            if (isEnter) view.setBackgroundColor(Color.BLUE);
+                                // on DragEvent.ACTION_DRAG_EXITED restore background
+                            else
+                                view.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.bg_item));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * for send drag info
+     */
+    public static class DragObject {
+        /**
+         * width of drag view
+         */
+        private int width;
+        /**
+         * height of drag view
+         */
+        private int height;
+
+        /**
+         * Constructor
+         *
+         * @param width  width of drag view
+         * @param height height of drag view
+         */
+        public DragObject(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
+
+        /**
+         * @return width
+         */
+        public int getWidth() {
+            return width;
+        }
+
+        /**
+         * set width
+         *
+         * @param width
+         */
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        /**
+         * @return height
+         */
+        public int getHeight() {
+            return height;
+        }
+
+        /**
+         * set height
+         *
+         * @param height
+         */
+        public void setHeight(int height) {
+            this.height = height;
+        }
     }
 }
