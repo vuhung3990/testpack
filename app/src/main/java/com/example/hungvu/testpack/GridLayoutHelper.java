@@ -56,6 +56,11 @@ public class GridLayoutHelper {
      */
     private addViewEvent event;
 
+    /**
+     * save current view tag before delete
+     */
+    private String currentReOrderTag = null;
+
     public GridLayoutHelper(GridLayout gridLayout, View.OnDragListener dragListener) {
         this.gridLayout = gridLayout;
         this.onDragListener = dragListener;
@@ -120,13 +125,13 @@ public class GridLayoutHelper {
 
     /**
      * add new grid item into grid layout
-     *
-     * @param row        position row
+     *  @param row        position row
      * @param rowSpan    row size
      * @param column     position column
      * @param columnSpan column size
+     * @param action
      */
-    public void addView(final int row, final int rowSpan, final int column, final int columnSpan) {
+    public void addView(final int row, final int rowSpan, final int column, final int columnSpan, DragObject.DragUserAction action) {
         // create view properties
         GridItemProperties properties = new GridItemProperties(row, rowSpan, column, columnSpan);
 
@@ -226,18 +231,38 @@ public class GridLayoutHelper {
                     if (event != null) event.onSuccess(properties);
                     // refresh grid layout
                     notifyGrid();
+                    // clear current tag
+                    currentReOrderTag = null;
+
                     Log.e(this.getClass().getName(), "valid -> add new view");
                 } else {
+                    // restore view when
+                    restoreViewWhenFail(action);
+
                     if (event != null) event.onDuplicate(properties);
                     Log.e(this.getClass().getName(), "view existed -> skip");
                 }
             } else {
+                // restore view when
+                restoreViewWhenFail(action);
+
                 if (event != null) event.onNotEnoughSpace(properties);
                 Log.e(this.getClass().getName(), "column = " + column + " and row = " + row + " not enought space -> skip");
             }
         } else {
             if (event != null) event.onBadParameters(properties);
             Log.e(this.getClass().getName(), "column = " + column + " and row = " + row + " is not valid -> skip");
+        }
+    }
+
+    /**
+     * restore current drag view when fail
+     * @param action user drag action
+     */
+    private void restoreViewWhenFail(DragObject.DragUserAction action) {
+        if(action == DragObject.DragUserAction.RE_ORDER && currentReOrderTag != null){
+            GridItemProperties currentProperties = GridItemProperties.retrieveObjectFromTag(currentReOrderTag);
+            addView(currentProperties.getRow(), currentProperties.getRowSpan(), currentProperties.getColumn(), currentProperties.getColumnSpan(), DragObject.DragUserAction.ADD_NEW);
         }
     }
 
@@ -250,6 +275,9 @@ public class GridLayoutHelper {
         if (gridLayout != null) {
             // find view item with tag
             View view = gridLayout.findViewWithTag(properties.getTagFromProperties());
+
+            // save view tag before remove for restore if fail
+            currentReOrderTag = properties.getTagFromProperties();
             if (view != null) {
                 gridLayout.removeView(view);
             } else {
