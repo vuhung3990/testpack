@@ -1,10 +1,13 @@
 package com.example.hungvu.testpack;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -59,6 +62,25 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+        // recommend hide map toolbar
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
+        // add maker demo
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+
+        //show button zoom to current location
+        GPSTracker tracker = new GPSTracker(this);
+        if (tracker.canGetLocation()) {
+            mMap.addCircle(new CircleOptions()
+                    .radius(30)
+                    .center(new LatLng(tracker.getLatitude(), tracker.getLongitude()))
+                    .fillColor(Color.parseColor("#402980b9"))
+                    .strokeWidth(1.5f)
+                    .strokeColor(Color.TRANSPARENT)
+            );
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tracker.getLatitude(), tracker.getLongitude()), 18));
+        } else {
+            tracker.showSettingsAlert();
+        }
     }
 }
