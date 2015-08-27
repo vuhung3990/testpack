@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                             GridItemProperties itemProperties = new GridItemProperties(object.getRow(), object.getHeight(), object.getColumn(), object.getWidth());
                             gridLayoutHelper.removeViewInGrid(itemProperties);
                         }
-                        gridLayoutHelper.addView(properties.getRow(), object.getHeight(), properties.getColumn(), object.getWidth());
+                        gridLayoutHelper.addView(properties.getRow(), object.getHeight(), properties.getColumn(), object.getWidth(), object.getAction());
 
 //                        Log.d("aaa", view.getId()+"..."+drop_container.getId());
 //
