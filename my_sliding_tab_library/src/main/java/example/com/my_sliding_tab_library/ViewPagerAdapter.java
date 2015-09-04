@@ -1,4 +1,4 @@
-package com.example.hungvu.testpack;
+package example.com.my_sliding_tab_library;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     List<ViewPagerItemObject> list;
+
     public ViewPagerAdapter(FragmentManager fm, List<ViewPagerItemObject> list) {
         super(fm);
         this.list = list;
@@ -34,7 +35,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     /**
      * ViewPager Item object
      */
-    public static class ViewPagerItemObject{
+    public static class ViewPagerItemObject {
         private String title;
         private Fragment fragment;
 

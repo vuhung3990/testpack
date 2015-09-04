@@ -10,6 +10,9 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import example.com.my_sliding_tab_library.SlidingTabLayout;
+import example.com.my_sliding_tab_library.ViewPagerAdapter;
+
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
@@ -51,12 +54,12 @@ public class MainActivity extends AppCompatActivity {
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
+                return getResources().getColor(R.color.Build_In_Tab_Indicator_Color);
             }
         });
 
         // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager, R.color.selector);
+        tabs.setViewPager(pager, R.color.build_in_title_selector);
 
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

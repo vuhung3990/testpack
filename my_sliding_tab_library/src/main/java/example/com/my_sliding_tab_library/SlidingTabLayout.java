@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.hungvu.testpack;
+package example.com.my_sliding_tab_library;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -48,28 +48,14 @@ import android.widget.TextView;
  * providing the layout ID of your custom layout.
  */
 public class SlidingTabLayout extends HorizontalScrollView {
+    private static final int TITLE_OFFSET_DIPS = 24;
+    private static final int TAB_VIEW_PADDING_DIPS = 16;
+    private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
+    private final SlidingTabStrip mTabStrip;
     /**
      * title tab color
      */
     private int selectedTitleColorRes = -1;
-
-    /**
-     * Allows complete control over the colors drawn in the tab layout. Set with
-     * {@link #setCustomTabColorizer(TabColorizer)}.
-     */
-    public interface TabColorizer {
-
-        /**
-         * @return return the color of the indicator used when {@code position} is selected.
-         */
-        int getIndicatorColor(int position);
-
-    }
-
-    private static final int TITLE_OFFSET_DIPS = 24;
-    private static final int TAB_VIEW_PADDING_DIPS = 16;
-    private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
-
     private int mTitleOffset;
 
     private int mTabViewLayoutId;
@@ -79,8 +65,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private ViewPager mViewPager;
     private SparseArray<String> mContentDescriptions = new SparseArray<>();
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
-
-    private final SlidingTabStrip mTabStrip;
 
     public SlidingTabLayout(Context context) {
         this(context, null);
@@ -156,10 +140,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
      * @param viewPager             adapter
      * @param selectedTitleColorRes selector (res/color/selector.xml): <p>{@code <?xml version="1.0" encoding="utf-8"?>
      *                              <selector xmlns:android="http://schemas.android.com/apk/res/android">
-     *                                  <item android:state_selected="true" android:color="@android:color/white" />
-     *                                  <item android:state_focused="true" android:color="@android:color/white" />
-     *                                  <item android:state_pressed="true" android:color="@android:color/white" />
-     *                                  <item android:color="#8a140e" />
+     *                              <item android:state_selected="true" android:color="@android:color/white" />
+     *                              <item android:state_focused="true" android:color="@android:color/white" />
+     *                              <item android:state_pressed="true" android:color="@android:color/white" />
+     *                              <item android:color="#8a140e" />
      *                              </selector>}</p>
      */
     public void setViewPager(ViewPager viewPager, int selectedTitleColorRes) {
@@ -200,7 +184,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     private void populateTabStrip() {
         final PagerAdapter adapter = mViewPager.getAdapter();
-        final View.OnClickListener tabClickListener = new TabClickListener();
+        final OnClickListener tabClickListener = new TabClickListener();
 
         for (int i = 0; i < adapter.getCount(); i++) {
             View tabView = null;
@@ -230,7 +214,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
             tabTitleView.setText(adapter.getPageTitle(i));
 
             // set selected title tab color
-            if(selectedTitleColorRes != -1)
+            if (selectedTitleColorRes != -1)
                 tabTitleView.setTextColor(getResources().getColorStateList(selectedTitleColorRes));
 
             tabView.setOnClickListener(tabClickListener);
@@ -276,6 +260,19 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
             scrollTo(targetScrollX, 0);
         }
+    }
+
+    /**
+     * Allows complete control over the colors drawn in the tab layout. Set with
+     * {@link #setCustomTabColorizer(TabColorizer)}.
+     */
+    public interface TabColorizer {
+
+        /**
+         * @return return the color of the indicator used when {@code position} is selected.
+         */
+        int getIndicatorColor(int position);
+
     }
 
     private class InternalViewPagerListener implements ViewPager.OnPageChangeListener {
@@ -327,7 +324,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     }
 
-    private class TabClickListener implements View.OnClickListener {
+    private class TabClickListener implements OnClickListener {
         @Override
         public void onClick(View v) {
             for (int i = 0; i < mTabStrip.getChildCount(); i++) {
