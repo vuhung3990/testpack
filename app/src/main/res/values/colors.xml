@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- main color -->
+    <color name="ColorPrimary">#c1e62b</color>
+    <!-- selected tab indicator color -->
+    <color name="tabsScrollColor">#0e8a4c</color>
+</resources>
