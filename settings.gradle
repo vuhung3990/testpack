@@ -1,1 +1,1 @@
-include ':app', ":my_sliding_tab_library"
+include ":my_sliding_tab_library", ':app'
