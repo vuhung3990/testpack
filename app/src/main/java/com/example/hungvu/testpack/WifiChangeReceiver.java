@@ -94,7 +94,11 @@ public class WifiChangeReceiver extends BroadcastReceiver {
             @Override
             public void onFinish() {
                 // unregister receiver
-                context.unregisterReceiver(WifiChangeReceiver.this);
+                try {
+                    context.unregisterReceiver(WifiChangeReceiver.this);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 if (listener != null) {
                     listener.OnFinish(lastState, currentWifiInfo);
                 }

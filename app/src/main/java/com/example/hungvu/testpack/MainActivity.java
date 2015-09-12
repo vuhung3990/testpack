@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity implements WifiChangeReceiver.onWifiChangeListener {
 
@@ -25,11 +26,15 @@ public class MainActivity extends AppCompatActivity implements WifiChangeReceive
         receiver = new WifiChangeReceiver();
         receiver.setListener(this);
 
-        // -------------------------------------- //;
-        // register receiver
-        registerReceiver(receiver, filter);
-        // start setting activity
-        startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), REQUEST_CODE);
+        findViewById(R.id.txt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // register receiver
+                registerReceiver(receiver, filter);
+                // start setting activity
+                startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), REQUEST_CODE);
+            }
+        });
     }
 
     @Override
