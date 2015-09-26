@@ -1,8 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+     
+        
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-    </style>
+                
+        <item name="colorPrimary">#ff343f</item>
+                
+        <item name="colorPrimaryDark">#ff3fe6</item>
 
+        <!-- colorAccent is used as the default value for colorControlActivated, which is used to tint widgets -->
+        <item name="colorAccent">#ffffff</item>
+
+        <!-- You can also set colorControlNormal, colorControlActivated
+             colorControlHighlight, and colorSwitchThumbNormal. -->
+    </style>
 </resources>

@@ -31,13 +31,14 @@ public class MainActivity extends AppCompatActivity {
 
         //---- icon for toggle navigation ----//
         // mToolbar.setNavigationIcon(R.drawable.abc_ic_voice_search_api_mtrl_alpha);
+
         //---- over flow icon ( menu expand at right) ----//
         mToolbar.setOverflowIcon(getResources().getDrawable(R.drawable.abc_ic_commit_search_api_mtrl_alpha));
         setSupportActionBar(mToolbar);
 
-        //Initializing NavigationView
+        // Initializing NavigationView
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
+        // Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
             // This method will trigger on item Click of navigation menu
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
 
                 // Closing drawer on item click
-                // drawerLayout.closeDrawers();
+                 drawerLayout.closeDrawers();
 
                 //Check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
