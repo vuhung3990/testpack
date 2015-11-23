@@ -2,15 +2,43 @@ package com.example.hungvu.testpack;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewStub;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ViewStub viewStub;
+    private LinearLayout mContainer;
+    private LayoutInflater layoutInflater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        mContainer = (LinearLayout) findViewById(R.id.container);
+        layoutInflater = LayoutInflater.from(this);
+        ((CheckBox) findViewById(R.id.button)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    viewStub = (ViewStub) findViewById(R.id.viewstub);
+                    if (viewStub == null) {
+                        mContainer.addView(layoutInflater.inflate(R.layout.stub, null), 0);
+                        viewStub = (ViewStub) findViewById(R.id.viewstub);
+                    }
+                    viewStub.inflate();
+                } else {
+                    mContainer.removeViewAt(0);
+                }
+            }
+        });
     }
 
     @Override
