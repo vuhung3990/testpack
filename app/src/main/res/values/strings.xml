@@ -3,4 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- facebook app id from developer site -->
+    <string name="facebook_app_id" translatable="false">560040454153884</string>
 </resources>
