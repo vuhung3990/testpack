@@ -39,13 +39,19 @@ public class ContentProviderSample extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(Database.tableName);
-        if (sUriMatcher.match(uri) == CODE_DATAS) {
-            long id = ContentUris.parseId(uri);
-            queryBuilder.appendWhere("_id=" + id);
+        try {
+            Thread.sleep(5000);
+            SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+            queryBuilder.setTables(Database.tableName);
+            if (sUriMatcher.match(uri) == CODE_DATAS) {
+                long id = ContentUris.parseId(uri);
+                queryBuilder.appendWhere("_id=" + id);
+            }
+            return queryBuilder.query(db.getWritableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return queryBuilder.query(db.getWritableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        return null;
     }
 
     @Nullable

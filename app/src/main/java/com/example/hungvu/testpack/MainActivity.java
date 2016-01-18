@@ -1,13 +1,16 @@
 package com.example.hungvu.testpack;
 
-import android.content.ContentUris;
-import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
         // delete
 //        getContentResolver().delete(ContentUris.withAppendedId(ContentProviderSample.CONTENT_URI, 6), null, null);
+
+        getSupportLoaderManager().initLoader(10, savedInstanceState, this);
     }
 
     @Override
@@ -55,5 +60,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // loader id
+        if (id == 10) {
+            return new CursorLoader(getApplicationContext(), ContentProviderSample.CONTENT_URI, null, null, null, null);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                Log.d("aaaaaaaa", "id=" + cursor.getInt(0) + ", name=" + cursor.getString(cursor.getColumnIndex("name")) + ", age=" + cursor.getInt(cursor.getColumnIndex("age")));
+            }
+            while (cursor.moveToNext());
+            cursor.close();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
